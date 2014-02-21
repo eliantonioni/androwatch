@@ -1,0 +1,91 @@
+package com.aeliseev.androwatch.sound;
+
+import android.util.SparseArray;
+import com.aeliseev.androwatch.R;
+
+import java.util.ArrayList;
+
+/**
+ * Created by AEliseev on 18.02.2014
+ */
+public class VoicesMap {
+
+    private int currentVoice = 0;
+    
+    private ArrayList<SparseArray<VoiceItem>> voices = new ArrayList<>();
+
+    public VoicesMap() {
+        
+        SparseArray<VoiceItem> voice1 = new SparseArray<>();
+        voice1.put( 0, new VoiceItem(R.raw.vm1_1,  R.raw.vm1_hours, R.raw.vm1_1,   R.raw.vm1_minut));
+
+        voice1.put( 1, new VoiceItem(R.raw.vm1_1,  R.raw.vm1_hour,  R.raw.vm1_1a,  R.raw.vm1_minuta));
+        voice1.put( 2, new VoiceItem(R.raw.vm1_2,  R.raw.vm1_houra, R.raw.vm1_2e,  R.raw.vm1_minutes));
+        voice1.put( 3, new VoiceItem(R.raw.vm1_3,  R.raw.vm1_houra, R.raw.vm1_3,   R.raw.vm1_minutes));
+        voice1.put( 4, new VoiceItem(R.raw.vm1_4,  R.raw.vm1_houra, R.raw.vm1_4,   R.raw.vm1_minutes));
+        voice1.put( 5, new VoiceItem(R.raw.vm1_5,  R.raw.vm1_hours, R.raw.vm1_5,   R.raw.vm1_minut));
+        voice1.put( 6, new VoiceItem(R.raw.vm1_6,  R.raw.vm1_hours, R.raw.vm1_6,   R.raw.vm1_minut));
+        voice1.put( 7, new VoiceItem(R.raw.vm1_7,  R.raw.vm1_hours, R.raw.vm1_7,   R.raw.vm1_minut));
+        voice1.put( 8, new VoiceItem(R.raw.vm1_8,  R.raw.vm1_hours, R.raw.vm1_8,   R.raw.vm1_minut));
+        voice1.put( 9, new VoiceItem(R.raw.vm1_9,  R.raw.vm1_hours, R.raw.vm1_9,   R.raw.vm1_minut));
+        voice1.put(10, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_10,  R.raw.vm1_minut));
+        voice1.put(11, new VoiceItem(R.raw.vm1_11, R.raw.vm1_hours, R.raw.vm1_11,  R.raw.vm1_minut));
+        voice1.put(12, new VoiceItem(R.raw.vm1_12, R.raw.vm1_hours, R.raw.vm1_12,  R.raw.vm1_minut));
+        voice1.put(13, new VoiceItem(R.raw.vm1_13, R.raw.vm1_hours, R.raw.vm1_13,  R.raw.vm1_minut));
+        voice1.put(14, new VoiceItem(R.raw.vm1_14, R.raw.vm1_hours, R.raw.vm1_14,  R.raw.vm1_minut));
+        voice1.put(15, new VoiceItem(R.raw.vm1_15, R.raw.vm1_hours, R.raw.vm1_15,  R.raw.vm1_minut));
+        voice1.put(16, new VoiceItem(R.raw.vm1_16, R.raw.vm1_hours, R.raw.vm1_16,  R.raw.vm1_minut));
+        voice1.put(17, new VoiceItem(R.raw.vm1_17, R.raw.vm1_hours, R.raw.vm1_17,  R.raw.vm1_minut));
+        voice1.put(18, new VoiceItem(R.raw.vm1_18, R.raw.vm1_hours, R.raw.vm1_18,  R.raw.vm1_minut));
+        voice1.put(19, new VoiceItem(R.raw.vm1_19, R.raw.vm1_hours, R.raw.vm1_19,  R.raw.vm1_minut));
+        voice1.put(20, new VoiceItem(R.raw.vm1_20, R.raw.vm1_hours, R.raw.vm1_20,  R.raw.vm1_minut));
+
+        voice1.put(21, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hour,  R.raw.vm1_21a, R.raw.vm1_minuta));
+        voice1.put(22, new VoiceItem(R.raw.vm1_10, R.raw.vm1_houra, R.raw.vm1_22e, R.raw.vm1_minutes));
+
+        voice1.put(23, new VoiceItem(R.raw.vm1_23, R.raw.vm1_houra, R.raw.vm1_23,  R.raw.vm1_minutes));
+
+        voice1.put(24, new VoiceItem(R.raw.vm1_10, R.raw.vm1_houra, R.raw.vm1_1, R.raw.vm1_minutes));
+        voice1.put(25, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(26, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(27, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(28, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(29, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(30, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(31, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hour, R.raw.vm1_1, R.raw.vm1_minuta));
+        voice1.put(32, new VoiceItem(R.raw.vm1_10, R.raw.vm1_houra, R.raw.vm1_1, R.raw.vm1_minutes));
+        voice1.put(33, new VoiceItem(R.raw.vm1_10, R.raw.vm1_houra, R.raw.vm1_1, R.raw.vm1_minutes));
+        voice1.put(34, new VoiceItem(R.raw.vm1_10, R.raw.vm1_houra, R.raw.vm1_1, R.raw.vm1_minutes));
+        voice1.put(35, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(36, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(37, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(38, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(39, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(40, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(41, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hour, R.raw.vm1_1, R.raw.vm1_minuta));
+        voice1.put(42, new VoiceItem(R.raw.vm1_10, R.raw.vm1_houra, R.raw.vm1_1, R.raw.vm1_minutes));
+        voice1.put(43, new VoiceItem(R.raw.vm1_10, R.raw.vm1_houra, R.raw.vm1_1, R.raw.vm1_minutes));
+        voice1.put(44, new VoiceItem(R.raw.vm1_10, R.raw.vm1_houra, R.raw.vm1_1, R.raw.vm1_minutes));
+        voice1.put(45, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(46, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(47, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(48, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(49, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(50, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(51, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hour, R.raw.vm1_1, R.raw.vm1_minuta));
+        voice1.put(52, new VoiceItem(R.raw.vm1_10, R.raw.vm1_houra, R.raw.vm1_1, R.raw.vm1_minutes));
+        voice1.put(53, new VoiceItem(R.raw.vm1_10, R.raw.vm1_houra, R.raw.vm1_1, R.raw.vm1_minutes));
+        voice1.put(54, new VoiceItem(R.raw.vm1_10, R.raw.vm1_houra, R.raw.vm1_1, R.raw.vm1_minutes));
+        voice1.put(55, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(56, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(57, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(58, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        voice1.put(59, new VoiceItem(R.raw.vm1_10, R.raw.vm1_hours, R.raw.vm1_1, R.raw.vm1_minut));
+        
+        voices.add(voice1);
+    }
+
+    public VoiceItem getVoiceItem(int number) {
+        return voices.get(currentVoice).get(number);
+    }
+}

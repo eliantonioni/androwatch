@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/widget"
+              android:layout_width="match_parent"
+              android:orientation="vertical"
+              android:background="@android:color/white"
+              android:layout_gravity="center"
+              android:layout_height="wrap_content"
+              android:focusable="true"
+              style="@style/WidgetBackground">
+
+    <TextView android:id="@+id/widget_textview"
+              android:text="Talking watch widget"
+              android:layout_height="wrap_content"
+              android:layout_width="wrap_content"
+              android:layout_gravity="center_horizontal|center"
+              android:textColor="@android:color/black"/>
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:orientation="horizontal"
+                  android:background="@android:color/white"
+                  android:layout_gravity="center"
+                  android:layout_height="wrap_content"
+                  android:focusable="true"
+                  style="@style/WidgetBackground">
+
+        <Button android:id="@+id/widget_button1"
+                android:text="start"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+
+        <Button android:id="@+id/widget_button2"
+                android:text="stop"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+
+        <Button android:id="@+id/widget_button3"
+                android:text="settings"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+
+    </LinearLayout>
+
+</LinearLayout>
