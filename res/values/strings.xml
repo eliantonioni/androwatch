@@ -5,5 +5,8 @@
 
     <string name="template_user_agent" translatable="false">"%1$s/%2$s (Linux; Android)"</string>
 
-    <string name="widget_name">Talking watch 22</string>
+    <string name="widget_name">Talking watch 25</string>
+
+    <color name="white">#FFFFFF</color>
+
 </resources>

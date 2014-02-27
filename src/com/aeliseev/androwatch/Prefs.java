@@ -1,12 +1,13 @@
 package com.aeliseev.androwatch;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Set;
 
 /**
  * Created by AEliseev on 18.02.2014
  */
-public class Prefs {
+public class Prefs implements Serializable {
 
     private boolean isActive = false;
     private Set<String> daysActive = Collections.emptySet();
