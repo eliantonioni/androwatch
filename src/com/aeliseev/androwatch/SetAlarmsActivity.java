@@ -3,14 +3,9 @@ package com.aeliseev.androwatch;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.*;
-import android.util.Log;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.TimePicker;
+import android.widget.*;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -23,6 +18,19 @@ public class SetAlarmsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.set_alarms);
 
+        TimePicker tp = (TimePicker) findViewById(R.id.timePicker);
+        tp.setIs24HourView(true);
+
+        NumberPicker dnp = (NumberPicker) findViewById(R.id.durationNumberPicker);
+        dnp.setMinValue(0);
+        dnp.setMaxValue(180);
+        dnp.setValue(2);
+
+        NumberPicker inp = (NumberPicker) findViewById(R.id.intervalNumberPicker);
+        inp.setMinValue(0);
+        inp.setMaxValue(60);
+        inp.setValue(1);
+
         Intent service = new Intent(getApplicationContext(), PrefsService.class);
         service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.GET_PREFS_DISC);
         service.putExtra(PrefsService.ALARM_NUMBER_EXTRA_KEY, 1);
@@ -31,7 +39,6 @@ public class SetAlarmsActivity extends Activity {
             @Override
             protected void onReceiveResult(int resultCode, Bundle resultData) {
                 Prefs prefs = (Prefs) resultData.getSerializable(PrefsService.PREFS_EXTRA_KEY);
-                Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "setup prefs in UI " + prefs.getDaysActive());
 
                 ((CheckBox) findViewById(R.id.activeCheckBox)).setChecked(prefs.isActive());
 
@@ -47,8 +54,8 @@ public class SetAlarmsActivity extends Activity {
                 tp.setCurrentHour(prefs.getStartHour());
                 tp.setCurrentMinute(prefs.getStartMinute());
 
-                ((EditText) findViewById(R.id.durationEditText)).setText(prefs.getDuration() + "");
-                ((EditText) findViewById(R.id.intervalEditText)).setText(prefs.getInterval() + "");
+                ((NumberPicker) findViewById(R.id.durationNumberPicker)).setValue(prefs.getDuration());
+                ((NumberPicker) findViewById(R.id.intervalNumberPicker)).setValue(prefs.getInterval());
             }
         });
 
@@ -59,10 +66,6 @@ public class SetAlarmsActivity extends Activity {
 
         Intent service = new Intent(getApplicationContext(), PrefsService.class);
         service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.SAVE_PREFS_DISC);
-
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Device time " + sdf.format(cal.getTime()));
 
         Prefs prefs = new Prefs();
 
@@ -104,18 +107,16 @@ public class SetAlarmsActivity extends Activity {
         prefs.setStartHour(tp.getCurrentHour());
         prefs.setStartMinute(tp.getCurrentMinute());
 
-        final EditText durationET = (EditText) findViewById(R.id.durationEditText);
-        prefs.setDuration(Integer.parseInt(durationET.getText().toString()));
+        final NumberPicker durationNP = (NumberPicker) findViewById(R.id.durationNumberPicker);
+        prefs.setDuration(durationNP.getValue());
 
-        final EditText intervalET = (EditText) findViewById(R.id.intervalEditText);
-        prefs.setInterval(Integer.parseInt(intervalET.getText().toString()));
+        final NumberPicker intervalNP = (NumberPicker) findViewById(R.id.intervalNumberPicker);
+        prefs.setInterval(intervalNP.getValue());
 
         prefs.setAlarmNumber(1);
         service.putExtra(PrefsService.PREFS_EXTRA_KEY, prefs);
 
         startService(service);
-
-        Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "sending prefs for saving to PrefsService " + prefs);
 
         // close activity
         finish();

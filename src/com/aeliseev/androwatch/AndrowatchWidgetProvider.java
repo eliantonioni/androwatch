@@ -5,6 +5,9 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -25,7 +28,7 @@ public class AndrowatchWidgetProvider extends AppWidgetProvider {
     }
 
     @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+    public void onUpdate(final Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
         //Создаем новый RemoteViews
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_androwatch_layout);
@@ -45,6 +48,23 @@ public class AndrowatchWidgetProvider extends AppWidgetProvider {
         remoteViews.setOnClickPendingIntent(R.id.widget_button2, piStop);
         remoteViews.setOnClickPendingIntent(R.id.widget_button3, saPendingIntent);
 
+        Intent service = new Intent(context, PrefsService.class);
+        service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.GET_PREFS_DISC);
+        service.putExtra(PrefsService.ALARM_NUMBER_EXTRA_KEY, 1);
+        service.putExtra(SingletonService.EXTRA_CALLBACK_KEY, new ResultReceiver(new Handler()) {
+
+            @Override
+            protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+                // start UpdateWidgetService
+                Intent iUWS = new Intent(context, UpdateWidgetService.class);
+                iUWS.putExtra(PrefsService.PREFS_EXTRA_KEY, resultData.getSerializable(PrefsService.PREFS_EXTRA_KEY));
+                context.startService(iUWS);
+            }
+        });
+
+        context.startService(service);
+
         //обновляем виджет
         appWidgetManager.updateAppWidget(appWidgetIds, remoteViews);
     }
@@ -53,8 +73,6 @@ public class AndrowatchWidgetProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
 
         final String action = intent.getAction();
-
-        Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "onReceive " + action);
 
         if (ACTION_START_ALARM.equals(action)) {
 

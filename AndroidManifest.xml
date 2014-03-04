@@ -23,6 +23,7 @@
 
         <service android:name="com.aeliseev.androwatch.AlarmService" />
         <service android:name="com.aeliseev.androwatch.PrefsService" />
+        <service android:name="com.aeliseev.androwatch.UpdateWidgetService" />
 
     </application>
 

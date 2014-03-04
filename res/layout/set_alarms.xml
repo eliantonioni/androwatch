@@ -22,54 +22,70 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Active"
-                android:id="@+id/activeCheckBox" android:checked="true"/>
+                android:id="@+id/activeCheckBox" android:checked="true" android:padding="5dp"/>
         <View
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:background="@color/white"/>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Days of week"/>
         <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-            <CheckBox
+                android:layout_height="wrap_content" android:padding="5dp">
+            <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/mondayCheckBox" android:text="Monday"/>
-            <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tuesday"
-                    android:id="@+id/tuesdayCheckBox"/>
-            <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Wednesday"
-                    android:id="@+id/wednesdayCheckBox"/>
-            <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Thursday"
-                    android:id="@+id/thursdayCheckBox"/>
-            <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Friday"
-                    android:id="@+id/fridayCheckBox"/>
-            <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Saturday"
-                    android:id="@+id/saturdayCheckBox"/>
-            <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sunday"
-                    android:id="@+id/sundayCheckBox"/>
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Days of week"/>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+                <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/mondayCheckBox" android:text="Monday"/>
+                    <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tuesday"
+                            android:id="@+id/tuesdayCheckBox"/>
+                    <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Wednesday"
+                            android:id="@+id/wednesdayCheckBox"/>
+                    <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Thursday"
+                            android:id="@+id/thursdayCheckBox"/>
+                </LinearLayout>
+                <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                    <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Friday"
+                            android:id="@+id/fridayCheckBox"/>
+                    <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Saturday"
+                            android:id="@+id/saturdayCheckBox"/>
+                    <CheckBox
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sunday"
+                            android:id="@+id/sundayCheckBox"/>
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
         <View
                 android:layout_width="fill_parent"
@@ -78,7 +94,7 @@
         <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content" android:padding="5dp">
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -87,45 +103,46 @@
             <TimePicker
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/timePicker"/>
+                    android:id="@+id/timePicker" android:clickable="false"/>
         </LinearLayout>
         <View
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:background="@color/white"/>
         <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
-            <EditText
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:ems="10"
-                    android:id="@+id/durationEditText" android:editable="false" android:text="2"/>
-            <TextView
+            <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Duration (in minutes)"/>
-        </LinearLayout>
-        <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="@color/white"/>
-        <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-            <EditText
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:ems="10"
-                    android:id="@+id/intervalEditText" android:text="1"/>
-            <TextView
+                    android:layout_height="wrap_content" android:padding="5dp">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Duration (in minutes)"/>
+                <NumberPicker
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/durationNumberPicker"
+                        android:layout_gravity="center_horizontal"/>
+            </LinearLayout>
+            <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Interval (in minutes)"/>
+                    android:layout_height="wrap_content" android:padding="5dp">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Interval (in minutes)"/>
+                <NumberPicker
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/intervalNumberPicker" android:layout_gravity="center_horizontal"/>
+
+            </LinearLayout>
         </LinearLayout>
         <LinearLayout
                 android:orientation="horizontal"

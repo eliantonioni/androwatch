@@ -1,6 +1,5 @@
 package com.aeliseev.androwatch;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -50,6 +49,7 @@ public class CalendarHelper {
 
             c2.set(Calendar.HOUR_OF_DAY, prefs.getStartHour());
             c2.set(Calendar.MINUTE, prefs.getStartMinute() > 0 ? prefs.getStartMinute() : 0);
+            c2.set(Calendar.SECOND, 0);
 
             if (c2.before(cal)) {
                 c2.add(Calendar.DATE, 7);

@@ -8,5 +8,8 @@
     <string name="widget_name">Talking watch 25</string>
 
     <color name="white">#FFFFFF</color>
+    <color name="green">#00FF00</color>
+    <color name="white_semi_tran">#80FFFFFF</color>
+    <color name="green_semi_tran">#8000FF00</color>
 
 </resources>

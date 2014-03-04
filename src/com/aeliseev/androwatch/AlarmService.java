@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PowerManager;
+import android.os.ResultReceiver;
 import android.util.Log;
 import android.widget.Toast;
 import com.aeliseev.androwatch.sound.SoundPlayer;
@@ -21,8 +23,8 @@ import java.util.Date;
  */
 public class AlarmService extends SingletonService {
 
-    public final static String START_ALARMS_DISC = "startAlarms";
     public final static String UPDATE_ALARMS_DISC = "updateAlarms";
+    public final static String START_ALARMS_DISC = "startAlarms";
     public final static String STOP_ALARMS_DISC = "stopAlarms";
 
     private final static long ONE_SECOND = 1000;
@@ -57,7 +59,7 @@ public class AlarmService extends SingletonService {
                         if (prefs != null) {
                             startAlarm(prefs);
                         } else {
-                            Log.e(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "prefs is null while setting next alarm!");
+                            Log.e(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Prefs is null while setting next alarm!");
                         }
                     }
                 } else {
@@ -96,64 +98,76 @@ public class AlarmService extends SingletonService {
 
         Bundle extras = intent.getExtras();
 
-        if (START_ALARMS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
+        if (UPDATE_ALARMS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
+
+            updateAlarms((Prefs) extras.getSerializable(PrefsService.PREFS_EXTRA_KEY));
+        }
+        else if (START_ALARMS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
 
             Intent service = new Intent(getApplicationContext(), PrefsService.class);
-            service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.GET_PREFS_TO_SET_ALARMS_DISC);
+            service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.GET_PREFS_DISC);
             service.putExtra(PrefsService.ALARM_NUMBER_EXTRA_KEY, 1);
+            service.putExtra(SingletonService.EXTRA_CALLBACK_KEY, new ResultReceiver(new Handler()) {
+
+                @Override
+                protected void onReceiveResult(int resultCode, Bundle resultData) {
+                    updateAlarms((Prefs) resultData.getSerializable(PrefsService.PREFS_EXTRA_KEY));
+                }
+            });
+
             startService(service);
 
         } else if (STOP_ALARMS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
 
             stopAlarm(1);
-
-        } else if (UPDATE_ALARMS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
-
-            prefs = (Prefs) extras.get(PrefsService.PREFS_EXTRA_KEY);
-            Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "updatingAlarms with " + prefs.toString());
-
-            stopAlarm(prefs.getAlarmNumber());
-            startAlarm(prefs);
         }
+    }
+
+    private void updateAlarms(Prefs prefs) {
+        this.prefs = prefs;
+        stopAlarm(prefs.getAlarmNumber());
+        startAlarm(prefs);
     }
 
     private void startAlarm(Prefs prefs) {
 
-        if (prefs.isActive()) {
+        if (checkSanity(prefs)) {
 
-            if (prefs.getStartHour() >= 0 && prefs.getDuration() >= 0) {
+            Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Starting alarm " + AlarmService.class.getName() + prefs.getAlarmNumber());
 
-                Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Starting alarm " + AlarmService.class.getName() + prefs.getAlarmNumber());
+            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(AlarmService.class.getName() + prefs.getAlarmNumber());
+            PendingIntent pi = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
 
-                AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                Intent intent = new Intent(AlarmService.class.getName() + prefs.getAlarmNumber());
-                PendingIntent pi = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+            long startTime = CalendarHelper.getClosestDate(prefs);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "    StartTime - " + sdf.format(new Date(startTime)));
+            long stopTime = startTime + prefs.getDuration() * ONE_MINUTE;
+            Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "    StopTime  - " + sdf.format(new Date(stopTime)));
 
-                long startTime = CalendarHelper.getClosestDate(prefs);
-                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-                Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "StartTime - " + sdf.format(new Date(startTime)));
-                long stopTime = startTime + prefs.getDuration() * ONE_MINUTE;
-                Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "StopTime  - " + sdf.format(new Date(stopTime)));
+            Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "    SysTime   - " + sdf.format(new Date(System.currentTimeMillis())));
 
-                Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "SysTime   - " + sdf.format(new Date(System.currentTimeMillis())));
+            long interval = prefs.getInterval() * ONE_MINUTE;
 
-                long interval = prefs.getInterval() * ONE_MINUTE;
+            // setup repeating timer
+            am.setRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    startTime,
+                    interval > 0 ? interval : DEFAULT_INTERVAL,
+                    pi
+            );
 
-                // setup repeating timer
-                am.setRepeating(
-                        AlarmManager.RTC_WAKEUP,
-                        startTime,
-                        interval > 0 ? interval : DEFAULT_INTERVAL,
-                        pi
-                );
-
-                // and also setup stop timer
-                Intent iStop = new Intent(AlarmService.class.getName() + prefs.getAlarmNumber() + STOP_INTENT_SUFFIX);
-                iStop.putExtra(PrefsService.ALARM_NUMBER_EXTRA_KEY, prefs.getAlarmNumber());
-                PendingIntent piStop = PendingIntent.getBroadcast(getApplicationContext(), 0, iStop, 0);
-                am.set(AlarmManager.RTC_WAKEUP, stopTime, piStop);
-            }
+            // and also setup stop timer
+            Intent iStop = new Intent(AlarmService.class.getName() + prefs.getAlarmNumber() + STOP_INTENT_SUFFIX);
+            iStop.putExtra(PrefsService.ALARM_NUMBER_EXTRA_KEY, prefs.getAlarmNumber());
+            PendingIntent piStop = PendingIntent.getBroadcast(getApplicationContext(), 0, iStop, 0);
+            am.set(AlarmManager.RTC_WAKEUP, stopTime, piStop);
         }
+
+        // start UpdateWidgetService
+        Intent iUWS = new Intent(getApplicationContext(), UpdateWidgetService.class);
+        iUWS.putExtra(PrefsService.PREFS_EXTRA_KEY, prefs);
+        startService(iUWS);
     }
 
     private void stopAlarm(int alarmNumber) {
@@ -163,5 +177,19 @@ public class AlarmService extends SingletonService {
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Cancelling alarm " + AlarmService.class.getName() + alarmNumber);
         am.cancel(sender);
+
+        // start UpdateWidgetService with null prefs
+        Intent iUWS = new Intent(getApplicationContext(), UpdateWidgetService.class);
+        iUWS.putExtra(PrefsService.PREFS_EXTRA_KEY, (Prefs) null);
+        startService(iUWS);
+    }
+
+    private boolean checkSanity(Prefs prefs) {
+
+        return
+                prefs.isActive()
+                        && prefs.getStartHour() >= 0
+                        && prefs.getDuration() >= 0
+                        && !prefs.getDaysActive().isEmpty();
     }
 }
