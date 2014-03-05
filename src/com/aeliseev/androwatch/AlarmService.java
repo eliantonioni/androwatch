@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -58,20 +59,30 @@ public class AlarmService extends SingletonService {
                         // setup next repeating alarm
                         if (prefs != null) {
                             startAlarm(prefs);
-                        } else {
+                        }
+                        else {
                             Log.e(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Prefs is null while setting next alarm!");
                         }
                     }
-                } else {
+                }
+                else {
                     Format formatter = new SimpleDateFormat("hh:mm:ss a");
                     Date dt = new Date();
                     Toast.makeText(getApplicationContext(), formatter.format(dt), Toast.LENGTH_SHORT).show();
 
                     Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "ALARM WORKING!!! " + formatter.format(dt));
 
+                    final int volume = setVolume(prefs.getVolume());
+
                     // play sound
                     SoundPlayer sp = new SoundPlayer();
-                    sp.playSoundChain(getApplicationContext(), dt);
+                    sp.playSoundChain(getApplicationContext(), dt, new ChainLink() {
+
+                        @Override
+                        public void doTaskWork(Context context) {
+                            setVolume(volume);
+                        }
+                    });
                 }
 
                 //Release the lock
@@ -178,6 +189,11 @@ public class AlarmService extends SingletonService {
         Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Cancelling alarm " + AlarmService.class.getName() + alarmNumber);
         am.cancel(sender);
 
+        Intent siStop = new Intent(AlarmService.class.getName() + alarmNumber + STOP_INTENT_SUFFIX);
+        PendingIntent senderStop = PendingIntent.getBroadcast(getApplicationContext(), 0, siStop, 0);
+        Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Cancelling alarm " + AlarmService.class.getName() + alarmNumber + STOP_INTENT_SUFFIX);
+        am.cancel(senderStop);
+
         // start UpdateWidgetService with null prefs
         Intent iUWS = new Intent(getApplicationContext(), UpdateWidgetService.class);
         iUWS.putExtra(PrefsService.PREFS_EXTRA_KEY, (Prefs) null);
@@ -191,5 +207,19 @@ public class AlarmService extends SingletonService {
                         && prefs.getStartHour() >= 0
                         && prefs.getDuration() >= 0
                         && !prefs.getDaysActive().isEmpty();
+    }
+
+    private int setVolume(int volume) {
+
+        AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        int result = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+        if (!prefs.isSystemVolume()) {
+
+            audio.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_SHOW_UI);
+            Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Setting volume to " + volume);
+        }
+
+        return result;
     }
 }

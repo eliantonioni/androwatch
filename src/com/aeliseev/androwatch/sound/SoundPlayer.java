@@ -1,6 +1,7 @@
 package com.aeliseev.androwatch.sound;
 
 import android.content.Context;
+import com.aeliseev.androwatch.ChainLink;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -13,7 +14,7 @@ public class SoundPlayer {
 
     private VoicesMap vmap = new VoicesMap();
 
-    public void playSoundChain(Context context, Date date) {
+    public void playSoundChain(Context context, Date date, ChainLink callback) {
 
         Calendar cal = GregorianCalendar.getInstance();
         cal.setTime(date);
@@ -30,7 +31,8 @@ public class SoundPlayer {
         hoursNumber.setNext(hoursWord);
         hoursWord.setNext(minutesNumber);
         minutesNumber.setNext(minutesWord);
+        minutesWord.setNext(callback);
 
-        hoursNumber.playSound(context);
+        hoursNumber.doTaskWork(context);
     }
 }

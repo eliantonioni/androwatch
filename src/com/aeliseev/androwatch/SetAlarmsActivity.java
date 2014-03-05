@@ -1,7 +1,9 @@
 package com.aeliseev.androwatch;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.*;
 import android.view.View;
 import android.widget.*;
@@ -31,6 +33,19 @@ public class SetAlarmsActivity extends Activity {
         inp.setMaxValue(60);
         inp.setValue(1);
 
+        AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        SeekBar vsb = (SeekBar) findViewById(R.id.volumeSeekBar);
+        vsb.setMax(audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+
+        ((CheckBox) findViewById(R.id.systemVolumeCheckBox))
+                .setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                findViewById(R.id.volumeSeekBar).setEnabled(!isChecked);
+            }
+        });
+
         Intent service = new Intent(getApplicationContext(), PrefsService.class);
         service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.GET_PREFS_DISC);
         service.putExtra(PrefsService.ALARM_NUMBER_EXTRA_KEY, 1);
@@ -40,7 +55,7 @@ public class SetAlarmsActivity extends Activity {
             protected void onReceiveResult(int resultCode, Bundle resultData) {
                 Prefs prefs = (Prefs) resultData.getSerializable(PrefsService.PREFS_EXTRA_KEY);
 
-                ((CheckBox) findViewById(R.id.activeCheckBox)).setChecked(prefs.isActive());
+                ((ToggleButton) findViewById(R.id.activeToggleButton)).setChecked(prefs.isActive());
 
                 ((CheckBox) findViewById(R.id.mondayCheckBox)).setChecked(prefs.getDaysActive().contains(CalendarHelper.DayOfWeek.mon.name()));
                 ((CheckBox) findViewById(R.id.tuesdayCheckBox)).setChecked(prefs.getDaysActive().contains(CalendarHelper.DayOfWeek.tue.name()));
@@ -56,6 +71,9 @@ public class SetAlarmsActivity extends Activity {
 
                 ((NumberPicker) findViewById(R.id.durationNumberPicker)).setValue(prefs.getDuration());
                 ((NumberPicker) findViewById(R.id.intervalNumberPicker)).setValue(prefs.getInterval());
+
+                ((SeekBar) findViewById(R.id.volumeSeekBar)).setProgress(prefs.getVolume());
+                ((CheckBox) findViewById(R.id.systemVolumeCheckBox)).setChecked(prefs.isSystemVolume());
             }
         });
 
@@ -69,7 +87,7 @@ public class SetAlarmsActivity extends Activity {
 
         Prefs prefs = new Prefs();
 
-        final CheckBox activeCheckbox = (CheckBox) findViewById(R.id.activeCheckBox);
+        final ToggleButton activeCheckbox = (ToggleButton) findViewById(R.id.activeToggleButton);
         prefs.setActive(activeCheckbox.isChecked());
 
         final CheckBox mondayCheckbox       = (CheckBox) findViewById(R.id.mondayCheckBox);
@@ -125,5 +143,25 @@ public class SetAlarmsActivity extends Activity {
     public void cancelPreferences(View button) {
         // close activity
         finish();
+    }
+
+    public void setActive(View button) {
+
+        final ToggleButton activeCheckbox = (ToggleButton) findViewById(R.id.activeToggleButton);
+
+        findViewById(R.id.mondayCheckBox).setEnabled(activeCheckbox.isChecked());
+        findViewById(R.id.tuesdayCheckBox).setEnabled(activeCheckbox.isChecked());
+        findViewById(R.id.wednesdayCheckBox).setEnabled(activeCheckbox.isChecked());
+        findViewById(R.id.thursdayCheckBox).setEnabled(activeCheckbox.isChecked());
+        findViewById(R.id.fridayCheckBox).setEnabled(activeCheckbox.isChecked());
+        findViewById(R.id.saturdayCheckBox).setEnabled(activeCheckbox.isChecked());
+        findViewById(R.id.sundayCheckBox).setEnabled(activeCheckbox.isChecked());
+        findViewById(R.id.timePicker).setEnabled(activeCheckbox.isChecked());
+        findViewById(R.id.durationNumberPicker).setEnabled(activeCheckbox.isChecked());
+        findViewById(R.id.intervalNumberPicker).setEnabled(activeCheckbox.isChecked());
+
+        boolean sv = ((CheckBox) findViewById(R.id.systemVolumeCheckBox)).isChecked();
+        findViewById(R.id.volumeSeekBar).setEnabled(activeCheckbox.isChecked() && !sv);
+        findViewById(R.id.systemVolumeCheckBox).setEnabled(activeCheckbox.isChecked());
     }
 }

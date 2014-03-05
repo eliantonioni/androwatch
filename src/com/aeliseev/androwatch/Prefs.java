@@ -16,6 +16,9 @@ public class Prefs implements Serializable {
     private int duration = -1;
     private int interval = -1;
 
+    private int volume;
+    private boolean systemVolume;
+
     private int alarmNumber = 1;
 
     public boolean isActive() {
@@ -74,6 +77,22 @@ public class Prefs implements Serializable {
         this.alarmNumber = alarmNumber;
     }
 
+    public int getVolume() {
+        return volume;
+    }
+
+    public void setVolume(int volume) {
+        this.volume = volume;
+    }
+
+    public boolean isSystemVolume() {
+        return systemVolume;
+    }
+
+    public void setSystemVolume(boolean systemVolume) {
+        this.systemVolume = systemVolume;
+    }
+
     @Override
     public String toString() {
         return "Prefs{" +
@@ -83,6 +102,8 @@ public class Prefs implements Serializable {
                 ", startMinute=" + startMinute +
                 ", duration=" + duration +
                 ", interval=" + interval +
+                ", volume=" + volume +
+                ", systemVolume=" + systemVolume +
                 ", alarmNumber=" + alarmNumber +
                 '}';
     }
