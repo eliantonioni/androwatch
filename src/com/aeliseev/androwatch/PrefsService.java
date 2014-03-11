@@ -12,11 +12,12 @@ import java.util.*;
  */
 public class PrefsService extends SingletonService {
 
-    public final static String GET_PREFS_DISC = "getPrefs";
-    public final static String SAVE_PREFS_DISC = "savePrefs";
+    public final static String GET_PREFS_DISC           = "getPrefs";
+    public final static String SAVE_PREFS_DISC          = "savePrefs";
+    public final static String ACTIVATE_PREFS_DISC      = "activatePrefs";
+    public final static String INACTIVATE_PREFS_DISC    = "inactivatePrefs";
 
     public final static String PREFS_EXTRA_KEY          = "prefsKey";
-    public final static String ALARM_NUMBER_EXTRA_KEY   = "alarmNumber";
 
     private static final String ALARM_PREFS_NAME = "AlarmFile";
 
@@ -33,46 +34,14 @@ public class PrefsService extends SingletonService {
     public void onHandleIntent(Intent intent) {
 
         Bundle extras = intent.getExtras();
+        Prefs prefs = (Prefs) extras.get(PREFS_EXTRA_KEY);
 
         if (GET_PREFS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
 
-            Prefs result = new Prefs();
-
-            Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Requesting prefs " + extras.getInt(ALARM_NUMBER_EXTRA_KEY));
-
-/*
-            SharedPreferences settings = getSharedPreferences(ALARM_PREFS_NAME + extras.getInt(ALARM_NUMBER_EXTRA_KEY), 0);
-            result.setActive(settings.getBoolean(IS_ACTIVE_PREFS_KEY, false));
-            result.setAlarmNumber(extras.getInt(ALARM_NUMBER_EXTRA_KEY));
-            result.setDaysActive(settings.getStringSet(DAYS_ACTIVE_PREFS_KEY, Collections.<String>emptySet()));
-            result.setStartHour(settings.getInt(START_HOUR_PREFS_KEY, -1));
-            result.setStartMinute(settings.getInt(START_MINUTE_PREFS_KEY, -1));
-            result.setDuration(settings.getInt(DURATION_MINUTES_PREFS_KEY, -1));
-            result.setInterval(settings.getInt(INTERVAL_MINUTES_PREFS_KEY, -1));
-            result.setSystemVolume(settings.getBoolean(SYSTEM_VOLUME_PREFS_KEY, true));
-            result.setVolume(settings.getInt(VOLUME_PREFS_KEY, -1));
-*/
-
-            // test prefs!
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.MINUTE, 1);
-            result.setActive(true);
-            result.setAlarmNumber(extras.getInt(ALARM_NUMBER_EXTRA_KEY));
-            result.setDaysActive(new HashSet(Arrays.asList("mon", "tue", "wed", "thu", "fri", "sat", "sun")));
-            result.setStartHour(cal.get(Calendar.HOUR_OF_DAY));
-            result.setStartMinute(cal.get(Calendar.MINUTE));
-            result.setDuration(3);
-            result.setInterval(1);
-            result.setVolume(2);
-            result.setSystemVolume(false);
-
-            Bundle data = new Bundle();
-            data.putSerializable(PrefsService.PREFS_EXTRA_KEY, result);
-            processCallback(extras, data);
+            Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Requesting prefs " + prefs.getAlarmNumber());
+            getPrefsFromSettings(extras, prefs.getAlarmNumber());
         }
         else if (SAVE_PREFS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
-
-            Prefs prefs = (Prefs) extras.get(PREFS_EXTRA_KEY);
 
             Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Saving prefs to SharedPreferences " + prefs);
 
@@ -96,5 +65,60 @@ public class PrefsService extends SingletonService {
             service.putExtra(PREFS_EXTRA_KEY, prefs);
             startService(service);
         }
+        else if (ACTIVATE_PREFS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
+
+            Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Activating prefs " + prefs.getAlarmNumber());
+            SharedPreferences settings = getSharedPreferences(
+                    ALARM_PREFS_NAME + prefs.getAlarmNumber(), 0
+            );
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(IS_ACTIVE_PREFS_KEY, true);
+            editor.commit();
+
+            getPrefsFromSettings(extras, prefs.getAlarmNumber());
+        }
+        else if (INACTIVATE_PREFS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
+
+            Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Inactivating prefs " + prefs.getAlarmNumber());
+            SharedPreferences settings = getSharedPreferences(
+                    ALARM_PREFS_NAME + prefs.getAlarmNumber(), 0
+            );
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(IS_ACTIVE_PREFS_KEY, false);
+            editor.commit();
+        }
+    }
+
+    private void getPrefsFromSettings(Bundle extras, int alarmNumber) {
+
+        Prefs result = new Prefs(alarmNumber);
+        SharedPreferences settings = getSharedPreferences(ALARM_PREFS_NAME + alarmNumber, 0);
+        result.setActive(settings.getBoolean(IS_ACTIVE_PREFS_KEY, false));
+        result.setDaysActive(settings.getStringSet(DAYS_ACTIVE_PREFS_KEY, Collections.<String>emptySet()));
+        result.setStartHour(settings.getInt(START_HOUR_PREFS_KEY, -1));
+        result.setStartMinute(settings.getInt(START_MINUTE_PREFS_KEY, -1));
+        result.setDuration(settings.getInt(DURATION_MINUTES_PREFS_KEY, -1));
+        result.setInterval(settings.getInt(INTERVAL_MINUTES_PREFS_KEY, -1));
+        result.setSystemVolume(settings.getBoolean(SYSTEM_VOLUME_PREFS_KEY, true));
+        result.setVolume(settings.getInt(VOLUME_PREFS_KEY, -1));
+
+/*
+            // test prefs!
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.MINUTE, 1);
+            result.setActive(true);
+            result.setAlarmNumber(extras.getInt(ALARM_NUMBER_EXTRA_KEY));
+            result.setDaysActive(new HashSet(Arrays.asList("mon", "tue", "wed", "thu", "fri", "sat", "sun")));
+            result.setStartHour(cal.get(Calendar.HOUR_OF_DAY));
+            result.setStartMinute(cal.get(Calendar.MINUTE));
+            result.setDuration(3);
+            result.setInterval(1);
+            result.setVolume(2);
+            result.setSystemVolume(false);
+*/
+
+        Bundle data = new Bundle();
+        data.putSerializable(PrefsService.PREFS_EXTRA_KEY, result);
+        processCallback(extras, data);
     }
 }

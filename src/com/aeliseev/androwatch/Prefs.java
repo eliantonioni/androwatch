@@ -21,6 +21,10 @@ public class Prefs implements Serializable {
 
     private int alarmNumber = 1;
 
+    public Prefs(int alarmNumber) {
+        this.alarmNumber = alarmNumber;
+    }
+
     public boolean isActive() {
         return isActive;
     }

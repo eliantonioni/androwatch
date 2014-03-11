@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.*;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
@@ -48,7 +49,8 @@ public class SetAlarmsActivity extends Activity {
 
         Intent service = new Intent(getApplicationContext(), PrefsService.class);
         service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.GET_PREFS_DISC);
-        service.putExtra(PrefsService.ALARM_NUMBER_EXTRA_KEY, 1);
+        service.putExtra(PrefsService.PREFS_EXTRA_KEY, new Prefs(1));
+
         service.putExtra(SingletonService.EXTRA_CALLBACK_KEY, new ResultReceiver(new Handler()) {
 
             @Override
@@ -74,6 +76,8 @@ public class SetAlarmsActivity extends Activity {
 
                 ((SeekBar) findViewById(R.id.volumeSeekBar)).setProgress(prefs.getVolume());
                 ((CheckBox) findViewById(R.id.systemVolumeCheckBox)).setChecked(prefs.isSystemVolume());
+
+                setActive(null);
             }
         });
 
@@ -85,7 +89,7 @@ public class SetAlarmsActivity extends Activity {
         Intent service = new Intent(getApplicationContext(), PrefsService.class);
         service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.SAVE_PREFS_DISC);
 
-        Prefs prefs = new Prefs();
+        Prefs prefs = new Prefs(1);
 
         final ToggleButton activeCheckbox = (ToggleButton) findViewById(R.id.activeToggleButton);
         prefs.setActive(activeCheckbox.isChecked());
@@ -121,17 +125,22 @@ public class SetAlarmsActivity extends Activity {
         }
         prefs.setDaysActive(daysActive);
 
-        final TimePicker tp = (TimePicker) findViewById(R.id.timePicker);
+        TimePicker tp = (TimePicker) findViewById(R.id.timePicker);
         prefs.setStartHour(tp.getCurrentHour());
         prefs.setStartMinute(tp.getCurrentMinute());
 
-        final NumberPicker durationNP = (NumberPicker) findViewById(R.id.durationNumberPicker);
+        NumberPicker durationNP = (NumberPicker) findViewById(R.id.durationNumberPicker);
         prefs.setDuration(durationNP.getValue());
 
-        final NumberPicker intervalNP = (NumberPicker) findViewById(R.id.intervalNumberPicker);
+        NumberPicker intervalNP = (NumberPicker) findViewById(R.id.intervalNumberPicker);
         prefs.setInterval(intervalNP.getValue());
 
-        prefs.setAlarmNumber(1);
+        SeekBar sb = (SeekBar) findViewById(R.id.volumeSeekBar);
+        prefs.setVolume(sb.getProgress());
+
+        CheckBox svCB = (CheckBox) findViewById(R.id.systemVolumeCheckBox);
+        prefs.setSystemVolume(svCB.isChecked());
+
         service.putExtra(PrefsService.PREFS_EXTRA_KEY, prefs);
 
         startService(service);

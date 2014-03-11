@@ -24,17 +24,17 @@ import java.util.Date;
  */
 public class AlarmService extends SingletonService {
 
-    public final static String UPDATE_ALARMS_DISC = "updateAlarms";
-    public final static String START_ALARMS_DISC = "startAlarms";
-    public final static String STOP_ALARMS_DISC = "stopAlarms";
+    public final static String UPDATE_ALARMS_DISC = "updateAlarms";     // start alarm if it is "active" in settings
+    public final static String START_ALARMS_DISC = "startAlarms";       // make alarm "active" in settings and start it
+    public final static String STOP_ALARMS_DISC = "stopAlarms";         // make alarm "inactive" in settings and stop it
+    public final static String DISABLE_ALARMS_DISC = "disableAlarms";   // stop alarm, no change in settings
+    public final static String TALK_ALARMS_DISC = "talkAlarms";
 
     private final static long ONE_SECOND = 1000;
     private final static long ONE_MINUTE = ONE_SECOND * 60;
     private final static long DEFAULT_INTERVAL = ONE_MINUTE * 5;
 
     private final static String STOP_INTENT_SUFFIX = ".Stop";
-
-    private Prefs prefs = null;
 
     // timer events receiver
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -50,37 +50,24 @@ public class AlarmService extends SingletonService {
                 //Acquire the lock
                 wl.acquire();
 
+                Bundle extras = intent.getExtras();
+                final Prefs prefs = (Prefs) extras.get(PrefsService.PREFS_EXTRA_KEY);
+
                 if (action.endsWith(STOP_INTENT_SUFFIX)) {
-                    Bundle extras = intent.getExtras();
-                    if (extras != null) {
 
-                        stopAlarm(extras.getInt(PrefsService.ALARM_NUMBER_EXTRA_KEY));
+                    stopAlarm(1);
 
-                        // setup next repeating alarm
-                        if (prefs != null) {
-                            startAlarm(prefs);
-                        }
-                        else {
-                            Log.e(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Prefs is null while setting next alarm!");
-                        }
-                    }
+                    // setup next repeating alarm
+                    startAlarm(prefs);
                 }
                 else {
-                    Format formatter = new SimpleDateFormat("hh:mm:ss a");
-                    Date dt = new Date();
-                    Toast.makeText(getApplicationContext(), formatter.format(dt), Toast.LENGTH_SHORT).show();
+                    final int volume = setVolume(prefs.getVolume(), prefs.isSystemVolume());
 
-                    Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "ALARM WORKING!!! " + formatter.format(dt));
-
-                    final int volume = setVolume(prefs.getVolume());
-
-                    // play sound
-                    SoundPlayer sp = new SoundPlayer();
-                    sp.playSoundChain(getApplicationContext(), dt, new ChainLink() {
+                    talkNow(new ChainLink() {
 
                         @Override
                         public void doTaskWork(Context context) {
-                            setVolume(volume);
+                            setVolume(volume, prefs.isSystemVolume());
                         }
                     });
                 }
@@ -116,8 +103,8 @@ public class AlarmService extends SingletonService {
         else if (START_ALARMS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
 
             Intent service = new Intent(getApplicationContext(), PrefsService.class);
-            service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.GET_PREFS_DISC);
-            service.putExtra(PrefsService.ALARM_NUMBER_EXTRA_KEY, 1);
+            service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.ACTIVATE_PREFS_DISC);
+            service.putExtra(PrefsService.PREFS_EXTRA_KEY, new Prefs(1));
             service.putExtra(SingletonService.EXTRA_CALLBACK_KEY, new ResultReceiver(new Handler()) {
 
                 @Override
@@ -127,15 +114,28 @@ public class AlarmService extends SingletonService {
             });
 
             startService(service);
+        }
+        else if (STOP_ALARMS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
 
-        } else if (STOP_ALARMS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
+            // save active = false to prefs
+            Intent service = new Intent(getApplicationContext(), PrefsService.class);
+            service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.INACTIVATE_PREFS_DISC);
+            service.putExtra(PrefsService.PREFS_EXTRA_KEY, new Prefs(1));
+            startService(service);
 
             stopAlarm(1);
+        }
+        else if (DISABLE_ALARMS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
+
+            stopAlarm(1);
+        }
+        else if (TALK_ALARMS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
+
+            talkNow(null);
         }
     }
 
     private void updateAlarms(Prefs prefs) {
-        this.prefs = prefs;
         stopAlarm(prefs.getAlarmNumber());
         startAlarm(prefs);
     }
@@ -170,7 +170,7 @@ public class AlarmService extends SingletonService {
 
             // and also setup stop timer
             Intent iStop = new Intent(AlarmService.class.getName() + prefs.getAlarmNumber() + STOP_INTENT_SUFFIX);
-            iStop.putExtra(PrefsService.ALARM_NUMBER_EXTRA_KEY, prefs.getAlarmNumber());
+            iStop.putExtra(PrefsService.PREFS_EXTRA_KEY, prefs);
             PendingIntent piStop = PendingIntent.getBroadcast(getApplicationContext(), 0, iStop, 0);
             am.set(AlarmManager.RTC_WAKEUP, stopTime, piStop);
         }
@@ -209,12 +209,25 @@ public class AlarmService extends SingletonService {
                         && !prefs.getDaysActive().isEmpty();
     }
 
-    private int setVolume(int volume) {
+    private void talkNow(ChainLink callback) {
+
+        Format formatter = new SimpleDateFormat("hh:mm:ss a");
+        Date dt = new Date();
+        Toast.makeText(getApplicationContext(), formatter.format(dt), Toast.LENGTH_SHORT).show();
+
+        Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "ALARM WORKING!!! " + formatter.format(dt));
+
+        // play sound
+        SoundPlayer sp = new SoundPlayer();
+        sp.playSoundChain(getApplicationContext(), dt, callback);
+    }
+
+    private int setVolume(int volume, boolean isSystemVolume) {
 
         AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         int result = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
 
-        if (!prefs.isSystemVolume()) {
+        if (!isSystemVolume) {
 
             audio.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_SHOW_UI);
             Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Setting volume to " + volume);

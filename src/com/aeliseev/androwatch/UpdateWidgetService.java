@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import java.text.SimpleDateFormat;
@@ -23,18 +24,14 @@ public class UpdateWidgetService extends SingletonService {
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 
         String nDate = "не установлено";
+        Prefs prefs = (Prefs) intent.getExtras().getSerializable(PrefsService.PREFS_EXTRA_KEY);
+        boolean setup = prefs != null && prefs.isActive();
 
-        try {
-            Prefs prefs = (Prefs) intent.getExtras().getSerializable(PrefsService.PREFS_EXTRA_KEY);
-            if (prefs != null && prefs.isActive()) {
+        if (setup) {
 
-                long startTime = CalendarHelper.getClosestDate(prefs);
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd.MM.yyyy");
-                nDate = sdf.format(new Date(startTime));
-            }
-        }
-        catch (Throwable e) {
-            Log.e(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Error on UWS: ", e);
+            long startTime = CalendarHelper.getClosestDate(prefs);
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd.MM.yyyy");
+            nDate = sdf.format(new Date(startTime));
         }
 
         for (int widgetId : appWidgetIds) {
@@ -43,7 +40,12 @@ public class UpdateWidgetService extends SingletonService {
                     R.layout.widget_androwatch_layout);
             remoteViews.setTextViewText(R.id.alarmsTextView, "Будильник: [" + nDate + "]");
 
-            Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Updating widget [widgetId=" + widgetId + "] alarm = " + nDate);
+            remoteViews.setViewVisibility(R.id.startButton, setup ? View.GONE : View.VISIBLE);
+            remoteViews.setViewVisibility(R.id.stopButton, setup ? View.VISIBLE : View.GONE);
+
+            Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG,
+                    "Updating widget [widgetId=" + widgetId + "] alarm = " + nDate
+            );
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
     }

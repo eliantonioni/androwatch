@@ -8,17 +8,23 @@
               android:layout_gravity="center"
               android:focusable="true"
               style="@style/WidgetBackground">
-
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
-        <Button android:id="@+id/widget_button1"
-                android:text="start"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"/>
-        <Button android:id="@+id/widget_button2"
-                android:text="stop"
+        <Button android:id="@+id/startButton"
+                android:text="Старт"
+                android:visibility="visible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        <Button android:id="@+id/stopButton"
+                android:text="Стоп"
+                android:clickable="false"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        <Button android:id="@+id/talkTimeButton"
+                android:text="Сейчас"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"/>
         <LinearLayout
@@ -26,8 +32,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right">
-            <Button android:id="@+id/widget_button3"
-                    android:text="settings"
+            <Button android:id="@+id/settingsButton"
+                    android:text="Установить"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_gravity="right"/>

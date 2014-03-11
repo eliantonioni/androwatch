@@ -13,7 +13,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Alarm settings"/>
+                android:text="Настройки будильника"/>
         <View
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
@@ -36,12 +36,13 @@
             <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" android:padding="5dp">
+                    android:layout_height="wrap_content"
+                    android:padding="5dp">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Days of week"/>
+                        android:text="Дни недели"/>
                 <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="fill_parent"
@@ -53,21 +54,22 @@
                         <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:id="@+id/mondayCheckBox" android:text="Monday"/>
+                                android:id="@+id/mondayCheckBox"
+                                android:text="Понедельник"/>
                         <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Tuesday"
+                                android:text="Вторник"
                                 android:id="@+id/tuesdayCheckBox"/>
                         <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Wednesday"
+                                android:text="Среда"
                                 android:id="@+id/wednesdayCheckBox"/>
                         <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Thursday"
+                                android:text="Четверг"
                                 android:id="@+id/thursdayCheckBox"/>
                     </LinearLayout>
                     <LinearLayout
@@ -78,17 +80,17 @@
                         <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Friday"
+                                android:text="Пятница"
                                 android:id="@+id/fridayCheckBox"/>
                         <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Saturday"
+                                android:text="Суббота"
                                 android:id="@+id/saturdayCheckBox"/>
                         <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Sunday"
+                                android:text="Воскресенье"
                                 android:id="@+id/sundayCheckBox"/>
                     </LinearLayout>
                 </LinearLayout>
@@ -100,16 +102,18 @@
             <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" android:padding="5dp">
+                    android:layout_height="wrap_content"
+                    android:padding="5dp">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Start alarm at"/>
+                        android:text="Начать подавать сигналы в"/>
                 <TimePicker
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/timePicker" android:clickable="false"/>
+                        android:id="@+id/timePicker"
+                        android:clickable="false"/>
             </LinearLayout>
             <View
                     android:layout_width="fill_parent"
@@ -122,12 +126,13 @@
                 <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:padding="5dp">
+                        android:layout_height="wrap_content"
+                        android:padding="5dp">
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:text="Duration (in minutes)"/>
+                            android:text="Период (в минутах)"/>
                     <NumberPicker
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -137,16 +142,18 @@
                 <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:padding="5dp">
+                        android:layout_height="wrap_content"
+                        android:padding="5dp">
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:text="Interval (in minutes)"/>
+                            android:text="Интервал (в минутах)"/>
                     <NumberPicker
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/intervalNumberPicker" android:layout_gravity="center_horizontal"/>
+                            android:id="@+id/intervalNumberPicker"
+                            android:layout_gravity="center_horizontal"/>
 
                 </LinearLayout>
             </LinearLayout>
@@ -168,17 +175,19 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:text="Volume"/>
+                            android:text="Громкость"/>
                     <SeekBar
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/volumeSeekBar" android:max="100" android:progress="20"
+                            android:id="@+id/volumeSeekBar"
+                            android:max="100"
+                            android:progress="20"
                             />
                 </LinearLayout>
                 <CheckBox
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="System volume"
+                        android:text="Системная громкость"
                         android:id="@+id/systemVolumeCheckBox"/>
             </LinearLayout>
         </LinearLayout>
@@ -193,13 +202,13 @@
             <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Save"
+                    android:text="Сохранить"
                     android:id="@+id/saveButton"
                     android:onClick="savePreferences"/>
             <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cancel"
+                    android:text="Отменить"
                     android:id="@+id/cancelButton"
                     android:onClick="cancelPreferences"/>
         </LinearLayout>

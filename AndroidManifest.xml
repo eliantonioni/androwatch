@@ -16,9 +16,9 @@
         <receiver android:name="com.aeliseev.androwatch.AndrowatchWidgetProvider" android:label="@string/widget_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
-                android:resource="@xml/widget_androwatch" />
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_androwatch" />
         </receiver>
 
         <service android:name="com.aeliseev.androwatch.AlarmService" />

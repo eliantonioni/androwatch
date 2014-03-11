@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 /**
@@ -20,11 +19,33 @@ public class AndrowatchWidgetProvider extends AppWidgetProvider {
 
     public static String ACTION_START_ALARM = "ActionStart";
     public static String ACTION_STOP_ALARM = "ActionStop";
+    public static String ACTION_TALK_ALARM = "ActionTalk";
+
+    @Override
+    public void onEnabled(final Context context) {
+
+        Intent service = new Intent(context, PrefsService.class);
+        service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.GET_PREFS_DISC);
+        service.putExtra(PrefsService.PREFS_EXTRA_KEY, new Prefs(1));
+        service.putExtra(SingletonService.EXTRA_CALLBACK_KEY, new ResultReceiver(new Handler()) {
+
+            @Override
+            protected void onReceiveResult(int resultCode, Bundle resultData) {
+                Intent as = new Intent(context, AlarmService.class);
+                as.putExtra(SingletonService.INTENT_DISCRIMINATOR, AlarmService.UPDATE_ALARMS_DISC);
+                as.putExtra(PrefsService.PREFS_EXTRA_KEY, resultData.getSerializable(PrefsService.PREFS_EXTRA_KEY));
+                context.startService(as);
+            }
+        });
+        context.startService(service);
+    }
 
     @Override
     public void onDisabled(Context context) {
-        Log.d( WIDGET_LOG_TAG, "inside onDisabled()");
-//        cancelAlarmIntent(context);
+
+        Intent service = new Intent(context, AlarmService.class);
+        service.putExtra(SingletonService.INTENT_DISCRIMINATOR, AlarmService.DISABLE_ALARMS_DISC);
+        context.startService(service);
     }
 
     @Override
@@ -41,29 +62,17 @@ public class AndrowatchWidgetProvider extends AppWidgetProvider {
         int2.setAction(ACTION_STOP_ALARM);
         PendingIntent piStop = PendingIntent.getBroadcast(context, 0, int2, 0);
 
+        Intent int3 = new Intent(context, AndrowatchWidgetProvider.class);
+        int3.setAction(ACTION_TALK_ALARM);
+        PendingIntent piTalk = PendingIntent.getBroadcast(context, 0, int3, 0);
+
         Intent saIntent = new Intent(context, SetAlarmsActivity.class);
-        PendingIntent saPendingIntent = PendingIntent.getActivity(context, 0, saIntent, 0);
+        PendingIntent piSettings = PendingIntent.getActivity(context, 0, saIntent, 0);
 
-        remoteViews.setOnClickPendingIntent(R.id.widget_button1, piStart);
-        remoteViews.setOnClickPendingIntent(R.id.widget_button2, piStop);
-        remoteViews.setOnClickPendingIntent(R.id.widget_button3, saPendingIntent);
-
-        Intent service = new Intent(context, PrefsService.class);
-        service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.GET_PREFS_DISC);
-        service.putExtra(PrefsService.ALARM_NUMBER_EXTRA_KEY, 1);
-        service.putExtra(SingletonService.EXTRA_CALLBACK_KEY, new ResultReceiver(new Handler()) {
-
-            @Override
-            protected void onReceiveResult(int resultCode, Bundle resultData) {
-
-                // start UpdateWidgetService
-                Intent iUWS = new Intent(context, UpdateWidgetService.class);
-                iUWS.putExtra(PrefsService.PREFS_EXTRA_KEY, resultData.getSerializable(PrefsService.PREFS_EXTRA_KEY));
-                context.startService(iUWS);
-            }
-        });
-
-        context.startService(service);
+        remoteViews.setOnClickPendingIntent(R.id.startButton, piStart);
+        remoteViews.setOnClickPendingIntent(R.id.stopButton, piStop);
+        remoteViews.setOnClickPendingIntent(R.id.talkTimeButton, piTalk);
+        remoteViews.setOnClickPendingIntent(R.id.settingsButton, piSettings);
 
         //обновляем виджет
         appWidgetManager.updateAppWidget(appWidgetIds, remoteViews);
@@ -84,6 +93,12 @@ public class AndrowatchWidgetProvider extends AppWidgetProvider {
 
             Intent service = new Intent(context, AlarmService.class);
             service.putExtra(SingletonService.INTENT_DISCRIMINATOR, AlarmService.STOP_ALARMS_DISC);
+            context.startService(service);
+        }
+        else if (ACTION_TALK_ALARM.equals(action)) {
+
+            Intent service = new Intent(context, AlarmService.class);
+            service.putExtra(SingletonService.INTENT_DISCRIMINATOR, AlarmService.TALK_ALARMS_DISC);
             context.startService(service);
         }
 
