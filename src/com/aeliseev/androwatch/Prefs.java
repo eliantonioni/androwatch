@@ -16,6 +16,8 @@ public class Prefs implements Serializable {
     private int duration = -1;
     private int interval = -1;
 
+    private int voiceNumber = 0;
+
     private int volume;
     private boolean systemVolume;
 
@@ -97,6 +99,14 @@ public class Prefs implements Serializable {
         this.systemVolume = systemVolume;
     }
 
+    public int getVoiceNumber() {
+        return voiceNumber;
+    }
+
+    public void setVoiceNumber(int voiceNumber) {
+        this.voiceNumber = voiceNumber;
+    }
+
     @Override
     public String toString() {
         return "Prefs{" +
@@ -108,6 +118,7 @@ public class Prefs implements Serializable {
                 ", interval=" + interval +
                 ", volume=" + volume +
                 ", systemVolume=" + systemVolume +
+                ", voiceNumber=" + voiceNumber +
                 ", alarmNumber=" + alarmNumber +
                 '}';
     }

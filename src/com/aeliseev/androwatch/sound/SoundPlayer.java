@@ -1,6 +1,8 @@
 package com.aeliseev.androwatch.sound;
 
 import android.content.Context;
+import android.util.Log;
+import com.aeliseev.androwatch.AndrowatchWidgetProvider;
 import com.aeliseev.androwatch.ChainLink;
 
 import java.util.Calendar;
@@ -14,25 +16,32 @@ public class SoundPlayer {
 
     private VoicesMap vmap = new VoicesMap();
 
-    public void playSoundChain(Context context, Date date, ChainLink callback) {
+    public void playSoundChain(Context context, Date date, int voice, ChainLink callback) {
 
-        Calendar cal = GregorianCalendar.getInstance();
-        cal.setTime(date);
+        try {
+            vmap.setCurrentVoice(voice);
 
-        VoiceItem hoursVI = vmap.getVoiceItem(cal.get(Calendar.HOUR_OF_DAY));
-        VoiceItem minutesVI = vmap.getVoiceItem(cal.get(Calendar.MINUTE));
+            Calendar cal = GregorianCalendar.getInstance();
+            cal.setTime(date);
 
-        SoundChainLink hoursNumber = new SoundChainLink(hoursVI.getHourNumber());
-        SoundChainLink hoursWord = new SoundChainLink(hoursVI.getHourWord());
+            VoiceItem hoursVI = vmap.getVoiceItem(cal.get(Calendar.HOUR_OF_DAY));
+            VoiceItem minutesVI = vmap.getVoiceItem(cal.get(Calendar.MINUTE));
 
-        SoundChainLink minutesNumber = new SoundChainLink(minutesVI.getMinuteNumber());
-        SoundChainLink minutesWord = new SoundChainLink(minutesVI.getMinuteWord());
+            SoundChainLink hoursNumber = new SoundChainLink(hoursVI.getHourNumber());
+            SoundChainLink hoursWord = new SoundChainLink(hoursVI.getHourWord());
 
-        hoursNumber.setNext(hoursWord);
-        hoursWord.setNext(minutesNumber);
-        minutesNumber.setNext(minutesWord);
-        minutesWord.setNext(callback);
+            SoundChainLink minutesNumber = new SoundChainLink(minutesVI.getMinuteNumber());
+            SoundChainLink minutesWord = new SoundChainLink(minutesVI.getMinuteWord());
 
-        hoursNumber.doTaskWork(context);
+            hoursNumber.setNext(hoursWord);
+            hoursWord.setNext(minutesNumber);
+            minutesNumber.setNext(minutesWord);
+            minutesWord.setNext(callback);
+
+            hoursNumber.doTaskWork(context);
+        } catch (Throwable thr) {
+
+            Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Error while playing sounds: ", thr);
+        }
     }
 }

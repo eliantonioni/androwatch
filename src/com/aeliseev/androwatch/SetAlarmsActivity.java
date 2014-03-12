@@ -49,7 +49,7 @@ public class SetAlarmsActivity extends Activity {
 
         Intent service = new Intent(getApplicationContext(), PrefsService.class);
         service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.GET_PREFS_DISC);
-        service.putExtra(PrefsService.PREFS_EXTRA_KEY, new Prefs(1));
+        service.putExtra(PrefsService.PREFS_EXTRA_KEY, new Prefs(PrefsService.ALARM_PREFS_DEFAULT_NUMBER));
 
         service.putExtra(SingletonService.EXTRA_CALLBACK_KEY, new ResultReceiver(new Handler()) {
 
@@ -89,7 +89,7 @@ public class SetAlarmsActivity extends Activity {
         Intent service = new Intent(getApplicationContext(), PrefsService.class);
         service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.SAVE_PREFS_DISC);
 
-        Prefs prefs = new Prefs(1);
+        Prefs prefs = new Prefs(PrefsService.ALARM_PREFS_DEFAULT_NUMBER);
 
         final ToggleButton activeCheckbox = (ToggleButton) findViewById(R.id.activeToggleButton);
         prefs.setActive(activeCheckbox.isChecked());

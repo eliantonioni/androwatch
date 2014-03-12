@@ -12,14 +12,16 @@ import java.util.*;
  */
 public class PrefsService extends SingletonService {
 
-    public final static String GET_PREFS_DISC           = "getPrefs";
-    public final static String SAVE_PREFS_DISC          = "savePrefs";
-    public final static String ACTIVATE_PREFS_DISC      = "activatePrefs";
-    public final static String INACTIVATE_PREFS_DISC    = "inactivatePrefs";
+    public final static String GET_PREFS_DISC               = "getPrefs";
+    public final static String SAVE_PREFS_DISC              = "savePrefs";
+    public final static String ACTIVATE_PREFS_DISC          = "activatePrefs";
+    public final static String INACTIVATE_PREFS_DISC        = "inactivatePrefs";
 
-    public final static String PREFS_EXTRA_KEY          = "prefsKey";
+    public final static String PREFS_EXTRA_KEY              = "prefsKey";
 
-    private static final String ALARM_PREFS_NAME = "AlarmFile";
+    public final static int ALARM_PREFS_DEFAULT_NUMBER      = 1;
+
+    private final static String ALARM_PREFS_NAME            = "AlarmFile";
 
     private static final String IS_ACTIVE_PREFS_KEY         = "is_active";
     private static final String DAYS_ACTIVE_PREFS_KEY       = "days_active";
@@ -45,9 +47,7 @@ public class PrefsService extends SingletonService {
 
             Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Saving prefs to SharedPreferences " + prefs);
 
-            SharedPreferences settings = getSharedPreferences(
-                ALARM_PREFS_NAME + prefs.getAlarmNumber(), 0
-            );
+            SharedPreferences settings = getSharedPreferences(ALARM_PREFS_NAME + prefs.getAlarmNumber(), MODE_PRIVATE);
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(IS_ACTIVE_PREFS_KEY, prefs.isActive());
             editor.putStringSet(DAYS_ACTIVE_PREFS_KEY, prefs.getDaysActive());
@@ -68,9 +68,7 @@ public class PrefsService extends SingletonService {
         else if (ACTIVATE_PREFS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
 
             Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Activating prefs " + prefs.getAlarmNumber());
-            SharedPreferences settings = getSharedPreferences(
-                    ALARM_PREFS_NAME + prefs.getAlarmNumber(), 0
-            );
+            SharedPreferences settings = getSharedPreferences(ALARM_PREFS_NAME + prefs.getAlarmNumber(), MODE_PRIVATE);
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(IS_ACTIVE_PREFS_KEY, true);
             editor.commit();
@@ -80,9 +78,7 @@ public class PrefsService extends SingletonService {
         else if (INACTIVATE_PREFS_DISC.equals(extras.getString(INTENT_DISCRIMINATOR))) {
 
             Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Inactivating prefs " + prefs.getAlarmNumber());
-            SharedPreferences settings = getSharedPreferences(
-                    ALARM_PREFS_NAME + prefs.getAlarmNumber(), 0
-            );
+            SharedPreferences settings = getSharedPreferences(ALARM_PREFS_NAME + prefs.getAlarmNumber(), MODE_PRIVATE);
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(IS_ACTIVE_PREFS_KEY, false);
             editor.commit();
@@ -92,7 +88,7 @@ public class PrefsService extends SingletonService {
     private void getPrefsFromSettings(Bundle extras, int alarmNumber) {
 
         Prefs result = new Prefs(alarmNumber);
-        SharedPreferences settings = getSharedPreferences(ALARM_PREFS_NAME + alarmNumber, 0);
+        SharedPreferences settings = getSharedPreferences(ALARM_PREFS_NAME + alarmNumber, MODE_PRIVATE);
         result.setActive(settings.getBoolean(IS_ACTIVE_PREFS_KEY, false));
         result.setDaysActive(settings.getStringSet(DAYS_ACTIVE_PREFS_KEY, Collections.<String>emptySet()));
         result.setStartHour(settings.getInt(START_HOUR_PREFS_KEY, -1));

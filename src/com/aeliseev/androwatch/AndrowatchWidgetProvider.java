@@ -26,7 +26,7 @@ public class AndrowatchWidgetProvider extends AppWidgetProvider {
 
         Intent service = new Intent(context, PrefsService.class);
         service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.GET_PREFS_DISC);
-        service.putExtra(PrefsService.PREFS_EXTRA_KEY, new Prefs(1));
+        service.putExtra(PrefsService.PREFS_EXTRA_KEY, new Prefs(PrefsService.ALARM_PREFS_DEFAULT_NUMBER));
         service.putExtra(SingletonService.EXTRA_CALLBACK_KEY, new ResultReceiver(new Handler()) {
 
             @Override
