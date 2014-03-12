@@ -5,11 +5,11 @@
 
     <string name="template_user_agent" translatable="false">"%1$s/%2$s (Linux; Android)"</string>
 
-    <string name="widget_name">Talking watch 25</string>
+    <string name="widget_name">Talking watch</string>
 
     <color name="white">#FFFFFF</color>
     <color name="green">#00FF00</color>
     <color name="white_semi_tran">#80FFFFFF</color>
-    <color name="green_semi_tran">#8000FF00</color>
+    <color name="green_semi_tran">#4000FF00</color>
 
 </resources>

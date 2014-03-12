@@ -1,6 +1,8 @@
 package com.aeliseev.androwatch.sound;
 
+import android.util.Log;
 import android.util.SparseArray;
+import com.aeliseev.androwatch.AndrowatchWidgetProvider;
 import com.aeliseev.androwatch.R;
 
 import java.util.ArrayList;
@@ -145,10 +147,14 @@ public class VoicesMap {
     }
 
     public VoiceItem getVoiceItem(int number) {
+        Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "SOUNDING voice=" + currentVoice + ", item=" + number);
         return voices.get(currentVoice).get(number);
     }
 
     public void setCurrentVoice(int currentVoice) {
-        this.currentVoice = currentVoice;
+
+        if (voices.size() >= currentVoice) {
+            this.currentVoice = currentVoice;
+        }
     }
 }

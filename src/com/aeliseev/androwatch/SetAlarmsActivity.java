@@ -47,6 +47,13 @@ public class SetAlarmsActivity extends Activity {
             }
         });
 
+        String[] data = {"Мужской русский", "Женский русский"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, data);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        Spinner spinner = (Spinner) findViewById(R.id.voiceSpinner);
+        spinner.setAdapter(adapter);
+
         Intent service = new Intent(getApplicationContext(), PrefsService.class);
         service.putExtra(SingletonService.INTENT_DISCRIMINATOR, PrefsService.GET_PREFS_DISC);
         service.putExtra(PrefsService.PREFS_EXTRA_KEY, new Prefs(PrefsService.ALARM_PREFS_DEFAULT_NUMBER));
@@ -76,6 +83,8 @@ public class SetAlarmsActivity extends Activity {
 
                 ((SeekBar) findViewById(R.id.volumeSeekBar)).setProgress(prefs.getVolume());
                 ((CheckBox) findViewById(R.id.systemVolumeCheckBox)).setChecked(prefs.isSystemVolume());
+
+                ((Spinner) findViewById(R.id.voiceSpinner)).setSelection(prefs.getVoiceNumber());
 
                 setActive(null);
             }
@@ -141,6 +150,9 @@ public class SetAlarmsActivity extends Activity {
         CheckBox svCB = (CheckBox) findViewById(R.id.systemVolumeCheckBox);
         prefs.setSystemVolume(svCB.isChecked());
 
+        Spinner vS = (Spinner) findViewById(R.id.voiceSpinner);
+        prefs.setVoiceNumber(vS.getSelectedItemPosition());
+
         service.putExtra(PrefsService.PREFS_EXTRA_KEY, prefs);
 
         startService(service);
@@ -168,6 +180,7 @@ public class SetAlarmsActivity extends Activity {
         findViewById(R.id.timePicker).setEnabled(activeCheckbox.isChecked());
         findViewById(R.id.durationNumberPicker).setEnabled(activeCheckbox.isChecked());
         findViewById(R.id.intervalNumberPicker).setEnabled(activeCheckbox.isChecked());
+        findViewById(R.id.voiceSpinner).setEnabled(activeCheckbox.isChecked());
 
         boolean sv = ((CheckBox) findViewById(R.id.systemVolumeCheckBox)).isChecked();
         findViewById(R.id.volumeSeekBar).setEnabled(activeCheckbox.isChecked() && !sv);

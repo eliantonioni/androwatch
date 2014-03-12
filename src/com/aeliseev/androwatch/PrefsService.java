@@ -31,6 +31,7 @@ public class PrefsService extends SingletonService {
     private static final String INTERVAL_MINUTES_PREFS_KEY  = "interval";
     private static final String SYSTEM_VOLUME_PREFS_KEY     = "system_volume";
     private static final String VOLUME_PREFS_KEY            = "volume";
+    private static final String VOICE_PREFS_KEY             = "voice";
 
     @Override
     public void onHandleIntent(Intent intent) {
@@ -57,6 +58,7 @@ public class PrefsService extends SingletonService {
             editor.putInt(INTERVAL_MINUTES_PREFS_KEY, prefs.getInterval());
             editor.putBoolean(SYSTEM_VOLUME_PREFS_KEY, prefs.isSystemVolume());
             editor.putInt(VOLUME_PREFS_KEY, prefs.getVolume());
+            editor.putInt(VOICE_PREFS_KEY, prefs.getVoiceNumber());
             editor.commit();
 
             // call AlarmService to update alarms
@@ -97,21 +99,7 @@ public class PrefsService extends SingletonService {
         result.setInterval(settings.getInt(INTERVAL_MINUTES_PREFS_KEY, -1));
         result.setSystemVolume(settings.getBoolean(SYSTEM_VOLUME_PREFS_KEY, true));
         result.setVolume(settings.getInt(VOLUME_PREFS_KEY, -1));
-
-/*
-            // test prefs!
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.MINUTE, 1);
-            result.setActive(true);
-            result.setAlarmNumber(extras.getInt(ALARM_NUMBER_EXTRA_KEY));
-            result.setDaysActive(new HashSet(Arrays.asList("mon", "tue", "wed", "thu", "fri", "sat", "sun")));
-            result.setStartHour(cal.get(Calendar.HOUR_OF_DAY));
-            result.setStartMinute(cal.get(Calendar.MINUTE));
-            result.setDuration(3);
-            result.setInterval(1);
-            result.setVolume(2);
-            result.setSystemVolume(false);
-*/
+        result.setVoiceNumber(settings.getInt(VOICE_PREFS_KEY, -1));
 
         Bundle data = new Bundle();
         data.putSerializable(PrefsService.PREFS_EXTRA_KEY, result);
