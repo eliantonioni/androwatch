@@ -15,6 +15,24 @@ public class SoundChainLink extends ChainLink {
         this.soundID = soundID;
     }
 
+    public SoundChainLink(int... soundIDs) {
+
+        if (soundIDs.length > 0) {
+
+            this.soundID = soundIDs[0];
+
+            if (soundIDs.length > 1) {
+
+                ChainLink[] arr = new ChainLink[soundIDs.length-1];
+                for (int i=1; i<soundIDs.length; i++) {
+
+                    arr[i-1] = new SoundChainLink(soundIDs[i]);
+                }
+                setupChain(arr);
+            }
+        }
+    }
+
     public void doTaskWork(final Context context) {
 
         MediaPlayer player = MediaPlayer.create(context, soundID);

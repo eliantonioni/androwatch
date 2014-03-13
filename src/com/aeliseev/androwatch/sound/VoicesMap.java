@@ -3,6 +3,7 @@ package com.aeliseev.androwatch.sound;
 import android.util.Log;
 import android.util.SparseArray;
 import com.aeliseev.androwatch.AndrowatchWidgetProvider;
+import com.aeliseev.androwatch.ChainLink;
 import com.aeliseev.androwatch.R;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class VoicesMap {
     private ArrayList<SparseArray<VoiceItem>> voices = new ArrayList<>();
 
     public VoicesMap() {
-        
+
         SparseArray<VoiceItem> voice1 = new SparseArray<>();
         voice1.put( 0, new VoiceItem(R.raw.vm1_0,  R.raw.vm1_hours, R.raw.vm1_0,   R.raw.vm1_minut));
         voice1.put( 1, new VoiceItem(R.raw.vm1_1,  R.raw.vm1_hour,  R.raw.vm1_1a,  R.raw.vm1_minuta));
