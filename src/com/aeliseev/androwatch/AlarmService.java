@@ -232,8 +232,7 @@ public class AlarmService extends SingletonService {
 
         // play sound
         SoundPlayer sp = new SoundPlayer();
-//        sp.playSoundChain(getApplicationContext(), dt, prefs.getVoiceNumber(), callback);
-        sp.playSoundChain2(getApplicationContext(), dt, prefs.getVoiceNumber(), callback);
+        sp.playSoundChain(getApplicationContext(), dt, prefs, callback);
     }
 
     private int setVolume(int volume, boolean isSystemVolume) {

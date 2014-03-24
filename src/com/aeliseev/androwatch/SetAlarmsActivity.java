@@ -3,7 +3,10 @@ package com.aeliseev.androwatch;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.AudioManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.*;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +18,9 @@ import java.util.*;
  * Created by AEliseev on 24.02.2014
  */
 public class SetAlarmsActivity extends Activity {
+
+    private static final int CHOOSE_RINGTONE_SUB_ACTIVITY_CODE = 10;
+    private static final String SILENT_RINGTONE_TEXT =  "Не задано";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +92,11 @@ public class SetAlarmsActivity extends Activity {
 
                 ((Spinner) findViewById(R.id.voiceSpinner)).setSelection(prefs.getVoiceNumber());
 
+                ((TextView) findViewById(R.id.ringtoneURIText)).setText(prefs.getRingtoneURI());
+                ((TextView) findViewById(R.id.ringtoneTitle)).setText(
+                        getAlarmNameByURI(Uri.parse(prefs.getRingtoneURI()))
+                );
+
                 setActive(null);
             }
         });
@@ -153,6 +164,9 @@ public class SetAlarmsActivity extends Activity {
         Spinner vS = (Spinner) findViewById(R.id.voiceSpinner);
         prefs.setVoiceNumber(vS.getSelectedItemPosition());
 
+        TextView ringtoneURITV = (TextView) findViewById(R.id.ringtoneURIText);
+        prefs.setRingtoneURI(ringtoneURITV.getText() != null ? ringtoneURITV.getText().toString() : "");
+
         service.putExtra(PrefsService.PREFS_EXTRA_KEY, prefs);
 
         startService(service);
@@ -181,9 +195,55 @@ public class SetAlarmsActivity extends Activity {
         findViewById(R.id.durationNumberPicker).setEnabled(activeCheckbox.isChecked());
         findViewById(R.id.intervalNumberPicker).setEnabled(activeCheckbox.isChecked());
         findViewById(R.id.voiceSpinner).setEnabled(activeCheckbox.isChecked());
+        findViewById(R.id.ringtoneButton).setEnabled(activeCheckbox.isChecked());
 
         boolean sv = ((CheckBox) findViewById(R.id.systemVolumeCheckBox)).isChecked();
         findViewById(R.id.volumeSeekBar).setEnabled(activeCheckbox.isChecked() && !sv);
         findViewById(R.id.systemVolumeCheckBox).setEnabled(activeCheckbox.isChecked());
+    }
+
+    public void chooseAlarmFile(View button) {
+
+        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+        startActivityForResult(intent, CHOOSE_RINGTONE_SUB_ACTIVITY_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == RESULT_OK && requestCode == CHOOSE_RINGTONE_SUB_ACTIVITY_CODE) {
+
+            Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+
+            if (uri != null) {
+
+                Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Ringtone URI=" + uri);
+                ((TextView) findViewById(R.id.ringtoneTitle)).setText(getAlarmNameByURI(uri));
+                ((TextView) findViewById(R.id.ringtoneURIText)).setText(uri.toString());
+            }
+            else { // no sounds ringtone
+
+                Log.d(AndrowatchWidgetProvider.WIDGET_LOG_TAG, "Silent ringtone");
+                ((TextView) findViewById(R.id.ringtoneTitle)).setText(SILENT_RINGTONE_TEXT);
+                ((TextView) findViewById(R.id.ringtoneURIText)).setText("");
+            }
+        }
+    }
+
+    private String getAlarmNameByURI(Uri uri) {
+
+        RingtoneManager manager = new RingtoneManager(this);
+        manager.setType(RingtoneManager.TYPE_NOTIFICATION);
+        Cursor cursor = manager.getCursor();
+        int i = 0;
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext(), i++) {
+
+            if (uri != null && uri.equals(manager.getRingtoneUri(i))) {
+                return cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX);
+            }
+        }
+
+        return SILENT_RINGTONE_TEXT;
     }
 }

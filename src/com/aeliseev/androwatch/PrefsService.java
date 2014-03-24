@@ -32,6 +32,7 @@ public class PrefsService extends SingletonService {
     private static final String SYSTEM_VOLUME_PREFS_KEY     = "system_volume";
     private static final String VOLUME_PREFS_KEY            = "volume";
     private static final String VOICE_PREFS_KEY             = "voice";
+    private static final String RINGTONE_URI_PREFS_KEY      = "ringtoneURI";
 
     @Override
     public void onHandleIntent(Intent intent) {
@@ -59,6 +60,7 @@ public class PrefsService extends SingletonService {
             editor.putBoolean(SYSTEM_VOLUME_PREFS_KEY, prefs.isSystemVolume());
             editor.putInt(VOLUME_PREFS_KEY, prefs.getVolume());
             editor.putInt(VOICE_PREFS_KEY, prefs.getVoiceNumber());
+            editor.putString(RINGTONE_URI_PREFS_KEY, prefs.getRingtoneURI());
             editor.commit();
 
             // call AlarmService to update alarms
@@ -100,6 +102,7 @@ public class PrefsService extends SingletonService {
         result.setSystemVolume(settings.getBoolean(SYSTEM_VOLUME_PREFS_KEY, true));
         result.setVolume(settings.getInt(VOLUME_PREFS_KEY, -1));
         result.setVoiceNumber(settings.getInt(VOICE_PREFS_KEY, -1));
+        result.setRingtoneURI(settings.getString(RINGTONE_URI_PREFS_KEY, ""));
 
         Bundle data = new Bundle();
         data.putSerializable(PrefsService.PREFS_EXTRA_KEY, result);

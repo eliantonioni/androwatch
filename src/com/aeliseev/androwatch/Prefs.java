@@ -15,6 +15,7 @@ public class Prefs implements Serializable {
     private int startMinute = -1;
     private int duration = -1;
     private int interval = -1;
+    private String ringtoneURI = "";
 
     private int voiceNumber = 0;
 
@@ -107,6 +108,14 @@ public class Prefs implements Serializable {
         this.voiceNumber = voiceNumber;
     }
 
+    public String getRingtoneURI() {
+        return ringtoneURI;
+    }
+
+    public void setRingtoneURI(String ringtoneURI) {
+        this.ringtoneURI = ringtoneURI;
+    }
+
     @Override
     public String toString() {
         return "Prefs{" +
@@ -120,6 +129,7 @@ public class Prefs implements Serializable {
                 ", systemVolume=" + systemVolume +
                 ", voiceNumber=" + voiceNumber +
                 ", alarmNumber=" + alarmNumber +
+                ", ringtoneURI=" + ringtoneURI +
                 '}';
     }
 }
